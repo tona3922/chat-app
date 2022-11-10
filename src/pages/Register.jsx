@@ -5,23 +5,24 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, storage, db } from "../firebase";
 import { async } from "@firebase/util";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { doc, setDoc } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore";
+import { Link } from "react-router-dom";
 // import { login } from "../pages/Login";
 export const Register = () => {
   const [err, seterr] = useState(false);
-  const handleSubmit = async (e)=>{
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     //console.log(e.target[0].value);
     const dname = e.target[0].value;
     const email = e.target[1].value;
     const password = e.target[2].value;
     const file = e.target[3].files[0];
 
-    // chèn từ link firebase nhớ xóa getAuth
+    // chèn từ a firebase nhớ xóa getAuth
     //import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
     //const auth = getAuth();
-    try{
+    try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
       /*.then((userCredential) => {
         // Signed in 
@@ -44,8 +45,9 @@ export const Register = () => {
       // 1. 'state_changed' observer, called any time the state changes
       // 2. Error observer, called on failure
       // 3. Completion observer, called on successful completion
-      uploadTask.on('state_changed', 
-      /*  (snapshot) => {
+      uploadTask.on(
+        "state_changed",
+        /*  (snapshot) => {
           // Observe state change events such as progress, pause, and resume
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -62,14 +64,14 @@ export const Register = () => {
         (error) => {
           // Handle unsuccessful uploads
           seterr(true);
-        }, 
+        },
         () => {
           // Handle successful uploads on complete
           // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
-           // console.log('File available at', downloadURL);
-            await updateProfile(res.user,{dname, photoURL: downloadURL});
-            await setDoc(doc(db, "users", res.user.uid),{
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            // console.log('File available at', downloadURL);
+            await updateProfile(res.user, { dname, photoURL: downloadURL });
+            await setDoc(doc(db, "users", res.user.uid), {
               uid: res.user.uid,
               dname,
               email,
@@ -78,12 +80,10 @@ export const Register = () => {
           });
         }
       );
-      
+    } catch (err) {
+      seterr(true);
     }
-    catch(err){
-        seterr(true);
-    }
-  }
+  };
 
   return (
     <div
@@ -98,7 +98,7 @@ export const Register = () => {
         <span className="logo">Goszip</span>
         <span className="title">Register</span>
         <form onSubmit={handleSubmit}>
-          <input type="text" placeholder="Your display name" />
+          <input type="text" placeholder="Username" />
           <input type="email" placeholder="Email" />
           <input type="password" placeholder="Password" />
           <input style={{ display: "none" }} type="file" id="file" />
@@ -107,9 +107,22 @@ export const Register = () => {
             <span>Add an avatar</span>
           </label>
           <button>Sign Up</button>
-          {err &&<span>Please retry (longer password maybe?)</span>}
+          {err && <span>Please retry (longer password maybe?)</span>}
         </form>
-        {/*<span>Already have an account ?</span> <Link to="/login">Login</Link>*/}
+        <p>
+          Already have an account ?{" "}
+          <Link
+            to="/login"
+            style={{
+              textDecoration: "none",
+              color: "black",
+              fontSize: 20,
+              fontWeight: "bold",
+            }}
+          >
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
