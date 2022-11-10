@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import Add from "../img/add-photo.png";
 import backgr from "../img/background.jpg";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, storage } from "../firebase";
+import { auth, storage, db } from "../firebase";
 import { async } from "@firebase/util";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore"; 
 // import { login } from "../pages/Login";
 export const Register = () => {
   const [err, seterr] = useState(false);
@@ -68,9 +69,16 @@ export const Register = () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
            // console.log('File available at', downloadURL);
             await updateProfile(res.user,{dname, photoURL: downloadURL});
+            await setDoc(doc(db, "users", res.user.uid),{
+              uid: res.user.uid,
+              dname,
+              email,
+              photoURL: downloadURL,
+            });
           });
         }
       );
+      
     }
     catch(err){
         seterr(true);
