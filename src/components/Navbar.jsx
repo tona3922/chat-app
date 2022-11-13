@@ -1,5 +1,6 @@
 import React from "react";
 import ava from "../img/avatar.jpg";
+import { Link } from "react-router-dom";
 
 export const Navbar = () => {
   return (
@@ -8,7 +9,11 @@ export const Navbar = () => {
       <div className="user">
         <img src={ava} alt="" />
         <span>Tommy</span>
-        <button>Log Out</button>
+        <button>
+          <Link to="/login" style={{ textDecoration: "none", color: "black" }}>
+            Log Out
+          </Link>
+        </button>
       </div>
     </div>
   );
